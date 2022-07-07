@@ -1,13 +1,17 @@
 package io.github.drhampust.mysql_sync;
 
 
+import com.oroarmor.config.ConfigItem;
 import com.oroarmor.config.ConfigItemGroup;
+import org.spongepowered.include.com.google.common.collect.ImmutableList;
 
 import java.sql.*;
 import java.util.Base64;
+import java.util.List;
 
 import static io.github.drhampust.mysql_sync.Main.CONFIG;
 import static io.github.drhampust.mysql_sync.Main.LOGGER;
+import static org.spongepowered.include.com.google.common.collect.ImmutableList.of;
 
 public class SQL {
     //TODO: Add configuration accesses to remove private final static string fields and make SQL useful for more than me
@@ -18,11 +22,12 @@ public class SQL {
     private static final String password;
     private Connection connection;
     static {
-        host = (String) ((ConfigItemGroup)CONFIG.getConfigs().get(0).getConfigs().get(0)).getConfigs().get(0).getValue();
-        port = (String) ((ConfigItemGroup)CONFIG.getConfigs().get(0).getConfigs().get(0)).getConfigs().get(1).getValue();
-        database = (String) ((ConfigItemGroup)CONFIG.getConfigs().get(0).getConfigs().get(0)).getConfigs().get(2).getValue();
-        username = (String) ((ConfigItemGroup)CONFIG.getConfigs().get(0).getConfigs().get(0)).getConfigs().get(3).getValue();
-        password = (String) ((ConfigItemGroup)CONFIG.getConfigs().get(0).getConfigs().get(0)).getConfigs().get(4).getValue();
+        List<ConfigItem<?>> sqlSection = ((ConfigItemGroup)CONFIG.getConfigs().get(0).getConfigs().get(0)).getConfigs();
+        host = (String) sqlSection.get(0).getValue();
+        port = (String) sqlSection.get(1).getValue();
+        database = (String) sqlSection.get(2).getValue();
+        username = (String) sqlSection.get(3).getValue();
+        password = (String) sqlSection.get(4).getValue();
     }
 
     public boolean isConnected() {
