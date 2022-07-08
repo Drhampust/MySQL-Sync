@@ -1,4 +1,4 @@
-package io.github.drhampust.mysql_sync;
+package io.github.drhampust.mysql_sync.util;
 
 import com.oroarmor.config.Config;
 import com.oroarmor.config.ConfigItemGroup;
