@@ -1,6 +1,7 @@
 package io.github.drhampust.mysql_sync;
 
 import com.oroarmor.config.Config;
+import io.github.drhampust.mysql_sync.util.SQLConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import org.slf4j.Logger;
@@ -23,7 +24,6 @@ public class Main implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		LOGGER.info("Main Triggered!");
 		CONFIG.readConfigFromFile();
 		CONFIG.saveConfigToFile();
 		ServerLifecycleEvents.SERVER_STOPPED.register(instance -> CONFIG.saveConfigToFile());
