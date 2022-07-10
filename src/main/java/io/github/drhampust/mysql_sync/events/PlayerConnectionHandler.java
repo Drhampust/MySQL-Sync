@@ -1,13 +1,18 @@
 package io.github.drhampust.mysql_sync.events;
 
 import io.github.drhampust.mysql_sync.Main;
+import io.github.drhampust.mysql_sync.util.SQL;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.collection.DefaultedList;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import static io.github.drhampust.mysql_sync.Main.LOGGER;
+import static io.github.drhampust.mysql_sync.util.SQL.*;
 import static io.github.drhampust.mysql_sync.util.base64Util.*;
 
 public class PlayerConnectionHandler implements ServerPlayConnectionEvents.Init, ServerPlayConnectionEvents.Disconnect {
@@ -19,51 +24,38 @@ public class PlayerConnectionHandler implements ServerPlayConnectionEvents.Init,
 
 	@Override
 	public void onPlayDisconnect(ServerPlayNetworkHandler handler, MinecraftServer server) {
+		LOGGER.info("Player disconnected saving inventory to db...");
 		ServerPlayerEntity player = handler.getPlayer();
-
-		DefaultedList<ItemStack> invMain = player.getInventory().main;
-		DefaultedList<ItemStack> decodedInvMain = DefaultedList.copyOf(ItemStack.EMPTY);
-		decodedInvMain.clear();
-		String encodedMain = toBase64(invMain);
-		decodedInvMain = fromBase64(encodedMain);
-		Main.LOGGER.info("inv Main:{}, to bas64:{}, decoded inv:{}", invMain, encodedMain, decodedInvMain);
-
-
-		DefaultedList<ItemStack> invArmor = player.getInventory().armor;
-		String encodedArmor = toBase64(invArmor);
-		DefaultedList<ItemStack> decodedInvArmor = DefaultedList.copyOf(ItemStack.EMPTY);
-		decodedInvArmor.clear();
-		decodedInvArmor = fromBase64(encodedArmor);
-		Main.LOGGER.info("inv Main:{}, to bas64:{}, decoded inv:{}", invArmor, encodedArmor, decodedInvArmor);
-
-		String UUID = player.getUuidAsString();
-		String encoded = toBase64(UUID);
-		String decoded = uuidFromBase64(encoded);
-		Main.LOGGER.info("Encoded UUID:{}, to bas64:{}, decoded UUID:{}", UUID, encoded, decoded);
+		String[] columns = {"uuid", "player_inventory"}; // Oracle
+		Object[] values = {toBase64(player.getUuidAsString()), toBase64(player)};
+		SQL.insertNoDuplicates("inventory", columns, values, columns[0]);
 	}
 
 	@Override
 	public void onPlayInit(ServerPlayNetworkHandler handler, MinecraftServer server) {
 		ServerPlayerEntity player = handler.getPlayer();
 
-		DefaultedList<ItemStack> invMain = player.getInventory().main;
-		DefaultedList<ItemStack> decodedInvMain = DefaultedList.copyOf(ItemStack.EMPTY);
-		decodedInvMain.clear();
-		String encodedMain = toBase64(invMain);
-		decodedInvMain = fromBase64(encodedMain);
-		Main.LOGGER.info("inv Main:{}, to bas64:{}, decoded inv:{}", invMain, encodedMain, decodedInvMain);
+		connectSQL(); // Connect SQL
+		try {
+			// SQL Statement to get row of this player UUID
+			PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM`minecraft_cross_server`.`inventory` WHERE UUID= ?");
+			preparedStatement.setString(1, toBase64(player.getUuidAsString())); // Insert Key
 
+			ResultSet result = preparedStatement.executeQuery(); // get Result set (should only be 1 row)
+			int i = 0;
+			while (result.next()) {
+				fromBase64(result.getString(2), player); // decode Inventory and replace player inventory
+				i++;
+			}
+			Main.LOGGER.info("All results decoded, {} entries", i);
 
-		DefaultedList<ItemStack> invArmor = player.getInventory().armor;
-		String encodedArmor = toBase64(invArmor);
-		DefaultedList<ItemStack> decodedInvArmor = DefaultedList.copyOf(ItemStack.EMPTY);
-		decodedInvArmor.clear();
-		decodedInvArmor = fromBase64(encodedArmor);
-		Main.LOGGER.info("inv Main:{}, to bas64:{}, decoded inv:{}", invArmor, encodedArmor, decodedInvArmor);
-
-		String UUID = player.getUuidAsString();
-		String encoded = toBase64(UUID);
-		String decoded = uuidFromBase64(encoded);
-		Main.LOGGER.info("Encoded UUID:{}, to bas64:{}, decoded UUID:{}", UUID, encoded, decoded);
+		} catch (SQLException e) {
+			disconnectSQL();
+			Main.LOGGER.error("SQL State: {}\n{}", e.getSQLState(), e.getMessage());
+		} catch (Exception e) {
+			disconnectSQL();
+			e.printStackTrace();
+		}
+		disconnectSQL();
 	}
 }

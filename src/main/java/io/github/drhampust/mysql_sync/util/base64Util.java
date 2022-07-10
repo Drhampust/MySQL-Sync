@@ -1,8 +1,10 @@
 package io.github.drhampust.mysql_sync.util;
 
-import net.minecraft.entity.player.PlayerInventory;
+import io.github.drhampust.mysql_sync.Main;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -23,43 +25,43 @@ public class base64Util {
      * @return Base64 string of the provided inventory
      * @throws IllegalStateException
      */
-    public static String toBase64(DefaultedList<ItemStack> inventory) throws IllegalStateException {
+    public static String toBase64(ServerPlayerEntity player) throws IllegalStateException {
+
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ObjectOutputStream dataOutput = new ObjectOutputStream(outputStream);
 
-            // Write the size of the inventory
-            dataOutput.writeInt(inventory.size());
+            int length = player.getInventory().size();
+            dataOutput.writeInt(length);
 
-            // Save every element in the list
-            for (int i = 0; i < inventory.size(); i++) {
-                dataOutput.writeObject(inventory.get(i));
+            for (int i = 0; i < length; i++) {
+                NbtCompound originalNbt = player.getInventory().getStack(i).writeNbt(new NbtCompound()); //itemStack is placeholder for item
+                NbtIo.write(originalNbt, dataOutput);
             }
-
-            // Serialize that array
-            dataOutput.close();
+            dataOutput.close(); // Serialize that array
             return Base64.getEncoder().encodeToString(outputStream.toByteArray());
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to save item stacks.", e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public static DefaultedList<ItemStack> fromBase64(String data){
+    public static void fromBase64(String data, ServerPlayerEntity player){
+
         try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(data));
             ObjectInputStream dataInput = new ObjectInputStream(inputStream);
-            DefaultedList<ItemStack> inventory = new PlayerInventory(null).armor;
-
-            // Read the serialized inventory
-            for (int i = 0; i < dataInput.readInt(); i++) {
-                inventory.add(i, (ItemStack) dataInput.readObject());
+            int length =  dataInput.readInt();
+            player.getInventory().clear();
+            for (int i = 0; i < length; i++) {
+                NbtCompound decodedNbt = NbtIo.read(dataInput);
+                player.getInventory().insertStack(i, ItemStack.fromNbt(decodedNbt));
             }
-
+            // Read the serialized inventory
             dataInput.close();
-            return inventory;
-        } catch (ClassNotFoundException | IOException ignored) {
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     /**
@@ -80,3 +82,5 @@ public class base64Util {
         return new String(Base64.getDecoder().decode(data));
     }
 }
+
+

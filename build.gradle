@@ -11,6 +11,8 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
+	mavenCentral()
+
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
@@ -32,10 +34,10 @@ dependencies {
 
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
 
-	// MySQL Java driver (Needed to connect to a SQL server)
+	// MariaDB MySQL Java driver (Needed to connect to a SQL server)
 	// https://mavenlibs.com/maven/dependency/com.oracle.database.jdbc/ojdbc11
-	modImplementation 'com.oracle.database.jdbc:ojdbc11:21.6.0.0'
-	include "com.oracle.database.jdbc:ojdbc11:21.6.0.0"
+	implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.6'
+	include "org.mariadb.jdbc:mariadb-java-client:3.0.6"
 
 	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
 	modImplementation 'mysql:mysql-connector-java:8.0.29'
@@ -44,6 +46,7 @@ dependencies {
 	// Config Handler
 	modImplementation 'com.oroarmor:oro-config-fabric:2.1.0'
 	include 'com.oroarmor:oro-config-fabric:2.1.0'
+
 }
 
 processResources {
