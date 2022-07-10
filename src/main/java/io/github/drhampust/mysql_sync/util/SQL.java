@@ -4,23 +4,24 @@ package io.github.drhampust.mysql_sync.util;
 import com.oroarmor.config.ConfigItem;
 import com.oroarmor.config.ConfigItemGroup;
 import io.github.drhampust.mysql_sync.Main;
+import io.github.drhampust.mysql_sync.util.objects.SQLColumn;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import static io.github.drhampust.mysql_sync.Main.CONFIG;
 import static io.github.drhampust.mysql_sync.Main.LOGGER;
 
 public class SQL {
-    //TODO: Add configuration accesses to remove private final static string fields and make SQL useful for more than me
     private static final String host;
     private static final String port;
     private static final String database;
     private static final String username;
     private static final String password;
     private static Connection connection;
+
     static {
         List<ConfigItem<?>> sqlSection = ((ConfigItemGroup)CONFIG.getConfigs().get(0).getConfigs().get(0)).getConfigs();
         host = (String) sqlSection.get(0).getValue();
@@ -30,20 +31,22 @@ public class SQL {
         password = (String) sqlSection.get(4).getValue();
     }
 
-    public static void createTable(String tableName, SQLColumn[] columns) {
+    public static void createTable(String tableName, @NotNull List<SQLColumn> columns, String args) {
         // Build string to create table within given database and only if no table with name already exists
         StringBuilder sqlQuery = new StringBuilder(100); // expecting string between 70 - 100 chars
         sqlQuery.append("CREATE TABLE IF NOT EXISTS `").append(database).append("`.`").append(tableName).append("` (");
         for (SQLColumn colum: columns) { // add columns to statement which was received as argument
             sqlQuery.append(colum).append(", ");
         }
-        sqlQuery.deleteCharAt(sqlQuery.length()-1).deleteCharAt(sqlQuery.length()-1); // remove trailing comma and blank space
-        sqlQuery.append(");");
+        if (args.equals(""))
+            sqlQuery.deleteCharAt(sqlQuery.length()-1).deleteCharAt(sqlQuery.length()-1); // remove trailing comma and blank space
+        sqlQuery.append(args).append(");");
+        LOGGER.info("Create table args:\n{}", args);
 
 
         // initialize statement outside of try scope
         Statement statement = null;
-
+        LOGGER.info("Create table using:\n{}", sqlQuery);
         connectSQL();
         // Try to perform statement
         try {
@@ -66,7 +69,7 @@ public class SQL {
         }
     }
 
-    public static void insertNoDuplicates(String db_table, String[] columns, Object[] values, String sqlKey) {
+    public static void insertNoDuplicates(String db_table, String @NotNull [] columns, Object @NotNull [] values, String sqlKey) {
         // using string builder instead of concatenating strings.
         StringBuilder sqlQuery = new StringBuilder(200); // expecting string between 150 - 200 chars
 
@@ -146,7 +149,7 @@ public class SQL {
         }
     }
 
-    public static ResultSet simpleSelectWhere(String db_table, String[] columns, String keyColumn, Object keyValue) {
+    public static ResultSet simpleSelectWhere(String db_table, String @NotNull [] columns, String keyColumn, Object keyValue) {
         // using string builder instead of concatenating strings.
         StringBuilder sqlQuery = new StringBuilder(200); // expecting string between 150 - 200 chars
 
@@ -167,7 +170,7 @@ public class SQL {
 
         // create statement outside of try scope, so we can close it after
         PreparedStatement preparedStatement = null;
-        ResultSet result = null;
+        ResultSet result;
 
         // Connect to SQL using config file
         connectSQL();
@@ -232,7 +235,6 @@ public class SQL {
             } catch (SQLException e) {
                 e.printStackTrace();
                 Main.LOGGER.error("Failed to disconnect from SQL!");
-            } finally {
             }
         }
     }
