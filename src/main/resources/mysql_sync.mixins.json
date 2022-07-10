@@ -8,7 +8,6 @@
     "TitleScreenMixin"
   ],
   "server": [
-    "EULAMixin"
   ],
   "injectors": {
     "defaultRequire": 1

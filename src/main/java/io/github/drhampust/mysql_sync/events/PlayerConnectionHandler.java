@@ -33,29 +33,17 @@ public class PlayerConnectionHandler implements ServerPlayConnectionEvents.Init,
 
 	@Override
 	public void onPlayInit(ServerPlayNetworkHandler handler, MinecraftServer server) {
+		LOGGER.info("Player Joined loading inventory from db...");
 		ServerPlayerEntity player = handler.getPlayer();
-
-		connectSQL(); // Connect SQL
+		ResultSet result = simpleSelectWhere("inventory", new String[]{},"uuid", toBase64(player.getUuidAsString()));
 		try {
-			// SQL Statement to get row of this player UUID
-			PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM`minecraft_cross_server`.`inventory` WHERE UUID= ?");
-			preparedStatement.setString(1, toBase64(player.getUuidAsString())); // Insert Key
-
-			ResultSet result = preparedStatement.executeQuery(); // get Result set (should only be 1 row)
-			int i = 0;
-			while (result.next()) {
-				fromBase64(result.getString(2), player); // decode Inventory and replace player inventory
-				i++;
+			if(result!=null){
+				while (result.next()) {
+					fromBase64(result.getString(2), player); // decode Inventory and replace player inventory
+				}
 			}
-			Main.LOGGER.info("All results decoded, {} entries", i);
-
 		} catch (SQLException e) {
-			disconnectSQL();
-			Main.LOGGER.error("SQL State: {}\n{}", e.getSQLState(), e.getMessage());
-		} catch (Exception e) {
-			disconnectSQL();
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-		disconnectSQL();
 	}
 }

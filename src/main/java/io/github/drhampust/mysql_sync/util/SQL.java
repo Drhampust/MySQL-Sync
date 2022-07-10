@@ -6,7 +6,9 @@ import com.oroarmor.config.ConfigItemGroup;
 import io.github.drhampust.mysql_sync.Main;
 
 import java.sql.*;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static io.github.drhampust.mysql_sync.Main.CONFIG;
 import static io.github.drhampust.mysql_sync.Main.LOGGER;
@@ -46,7 +48,6 @@ public class SQL {
         // Try to perform statement
         try {
             statement = connection.createStatement();
-            Main.LOGGER.info("Creating SQL table using: {}", sqlQuery.toString());
             statement.executeUpdate(sqlQuery.toString());
         } catch (SQLException e) { // Statement failed
             e.printStackTrace();
@@ -124,7 +125,6 @@ public class SQL {
                 // Increment statementIndex as first index is 1 and not 0 NOTE: statementIndex++ will increment after insertion
                 preparedStatement.setObject(++statementIndex, value);
             }
-            Main.LOGGER.info("Trying to execute following string: {}",preparedStatement.toString());
             // Run SQL Statement
             preparedStatement.executeUpdate();
 
@@ -144,6 +144,60 @@ public class SQL {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static ResultSet simpleSelectWhere(String db_table, String[] columns, String keyColumn, Object keyValue) {
+        // using string builder instead of concatenating strings.
+        StringBuilder sqlQuery = new StringBuilder(200); // expecting string between 150 - 200 chars
+
+        // generate first part of sql Query
+        sqlQuery.append("SELECT ");
+        if (Arrays.equals(columns, new String[]{}))
+            sqlQuery.append("*");
+        else {
+            for (String colum: columns) {
+                sqlQuery.append("`").append(colum).append("`, ");
+            }
+            // remove trailing comma and blank space
+            sqlQuery.deleteCharAt(sqlQuery.length()-1).deleteCharAt(sqlQuery.length()-1);
+        }
+        sqlQuery.append(" FROM `").append(database).append("`.`").append(db_table).append("` WHERE `").append(keyColumn).append("`=?;");
+
+        LOGGER.info("SQL Query:{}", sqlQuery);
+
+        // create statement outside of try scope, so we can close it after
+        PreparedStatement preparedStatement = null;
+        ResultSet result = null;
+
+        // Connect to SQL using config file
+        connectSQL();
+        try {
+            // Convert SQL String into a prepared statement (SQL injection safe)
+            preparedStatement = getConnection().prepareStatement(sqlQuery.toString());
+
+            // Replace value placeholder '?' with actual values
+            preparedStatement.setObject(1, keyValue);
+
+            // Run SQL Statement
+            result = preparedStatement.executeQuery();
+
+        } catch (SQLException e) {
+            disconnectSQL();
+            throw new RuntimeException(e);
+        } finally { // Statement succeeded and we need to clean up connections
+            try {
+                // Close connection
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                // disconnect from SQL
+                disconnectSQL();
+            } catch (Exception e) {
+                Main.LOGGER.error("Clean up of connections Failed!");
+                e.printStackTrace();
+            }
+        }
+        return result;
     }
 
     public static Connection getConnection() {
