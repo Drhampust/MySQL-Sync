@@ -1,8 +1,6 @@
 package io.github.drhampust.mysql_sync.util;
 
 
-import com.oroarmor.config.ConfigItem;
-import com.oroarmor.config.ConfigItemGroup;
 import io.github.drhampust.mysql_sync.Main;
 import io.github.drhampust.mysql_sync.util.objects.SQLColumn;
 import org.jetbrains.annotations.NotNull;
@@ -11,8 +9,8 @@ import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.github.drhampust.mysql_sync.Main.CONFIG;
 import static io.github.drhampust.mysql_sync.Main.LOGGER;
+import static io.github.drhampust.mysql_sync.Main.SQL_CONFIG;
 
 public class SQL {
     private static final String host;
@@ -23,12 +21,11 @@ public class SQL {
     private static Connection connection;
 
     static {
-        List<ConfigItem<?>> sqlSection = ((ConfigItemGroup)CONFIG.getConfigs().get(0).getConfigs().get(0)).getConfigs();
-        host = (String) sqlSection.get(0).getValue();
-        port = (String) sqlSection.get(1).getValue();
-        database = (String) sqlSection.get(2).getValue();
-        username = (String) sqlSection.get(3).getValue();
-        password = (String) sqlSection.get(4).getValue();
+        host = SQL_CONFIG.host;
+        port = "" + SQL_CONFIG.port;
+        database = SQL_CONFIG.database;
+        username = SQL_CONFIG.username;
+        password = SQL_CONFIG.password;
     }
 
     public static void createTable(String tableName, @NotNull List<SQLColumn> columns, String args) {
@@ -52,7 +49,7 @@ public class SQL {
             statement.executeUpdate(sqlQuery.toString());
         } catch (SQLException e) { // Statement failed
             e.printStackTrace();
-            Main.LOGGER.error("Creation of table on SQL Failed!");
+            LOGGER.error("Creation of table on SQL Failed!");
         } finally { // Statement succeeded and we need to clean up connections
             try {
                 // Close connection
@@ -61,7 +58,7 @@ public class SQL {
                 }
                 disconnectSQL();
             } catch (Exception e) {
-                Main.LOGGER.error("Clean up of connections Failed!");
+                LOGGER.error("Clean up of connections Failed!");
                 e.printStackTrace();
             }
         }
@@ -141,7 +138,7 @@ public class SQL {
                 // disconnect from SQL
                 disconnectSQL();
             } catch (Exception e) {
-                Main.LOGGER.error("Clean up of connections Failed!");
+                LOGGER.error("Clean up of connections Failed!");
                 e.printStackTrace();
             }
         }
@@ -192,7 +189,7 @@ public class SQL {
                 // disconnect from SQL
                 disconnectSQL();
             } catch (Exception e) {
-                Main.LOGGER.error("Clean up of connections Failed!");
+                LOGGER.error("Clean up of connections Failed!");
                 e.printStackTrace();
             }
         }
@@ -230,7 +227,7 @@ public class SQL {
                 connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-                Main.LOGGER.error("Failed to disconnect from SQL!");
+                LOGGER.error("Failed to disconnect from SQL!");
             }
         }
     }

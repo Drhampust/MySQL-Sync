@@ -12,8 +12,21 @@ group = project.maven_group
 
 repositories {
 	mavenCentral()
+		maven {
+			url 'https://jitpack.io'
+		}
+		maven {
+			url "https://maven.terraformersmc.com/"
+		}
+		maven {
+			url "https://maven.shedaniel.me/"
+		}
+		maven {
+			url "https://maven.siphalor.de/"
+		}
 
-	// Add repositories to retrieve artifacts from in here.
+
+		// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
@@ -34,18 +47,22 @@ dependencies {
 
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
 
-	// MariaDB MySQL Java driver (Needed to connect to a SQL server)
-	// https://mavenlibs.com/maven/dependency/com.oracle.database.jdbc/ojdbc11
-	implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.6'
-	include "org.mariadb.jdbc:mariadb-java-client:3.0.6"
+	// By using modImplementation we can make mod depend on another jar/mod
+	// By using include we add the jar into mod jar nesting so users don't need to download it them self.
+
+
+	// SQL Java drivers (Needed to connect to a SQL server)
+	// https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
+	modImplementation "org.mariadb.jdbc:mariadb-java-client:${project.mariadb_version}"
+	include "org.mariadb.jdbc:mariadb-java-client:${project.mariadb_version}"
 
 	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
-	modImplementation 'mysql:mysql-connector-java:8.0.29'
-	include "mysql:mysql-connector-java:8.0.29"
+	modImplementation "mysql:mysql-connector-java:${project.mysql_version}"
+	include "mysql:mysql-connector-java:${project.mysql_version}"
 
 	// Config Handler
-	modImplementation 'com.oroarmor:oro-config-fabric:2.1.0'
-	include 'com.oroarmor:oro-config-fabric:2.1.0'
+	modImplementation("com.gitlab.Lortseam.completeconfig:base:${project.completeconfig_version}")
+	include "com.gitlab.Lortseam.completeconfig:base:${project.completeconfig_version}"
 
 }
 
