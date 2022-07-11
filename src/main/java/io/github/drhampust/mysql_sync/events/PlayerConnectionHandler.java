@@ -29,11 +29,12 @@ public class PlayerConnectionHandler implements ServerPlayConnectionEvents.Init,
 	public void onPlayDisconnect(@NotNull ServerPlayNetworkHandler handler, MinecraftServer server) {
 		LOGGER.info("Player disconnected saving inventory to db...");
 		ServerPlayerEntity player = handler.getPlayer();
+
 		// Create an Array of columns to save
-		String[] columns = {"uuid", "player_inventory", "player_health", "player_hunger_exhaustion", "player_hunger_saturation", "player_hunger_level", "player_level", "player_experience"}; // Oracle
+		String[] columns = {"uuid", "player_inventory", "player_selected_slot", "player_health", "player_hunger_exhaustion", "player_hunger_saturation", "player_hunger_level", "player_level", "player_experience"}; // Oracle
 
 		// Create an Array of values to populate columns
-		Object[] values = {player.getUuidAsString(), invToBase64(player), player.getHealth(), player.getHungerManager().getExhaustion(), player.getHungerManager().getSaturationLevel(), player.getHungerManager().getFoodLevel(), player.experienceLevel, (int) (player.experienceProgress * player.getNextLevelExperience())};
+		Object[] values = {player.getUuidAsString(), invToBase64(player), player.getInventory().selectedSlot, player.getHealth(), player.getHungerManager().getExhaustion(), player.getHungerManager().getSaturationLevel(), player.getHungerManager().getFoodLevel(), player.experienceLevel, (int) (player.experienceProgress * player.getNextLevelExperience())};
 
 		// Call function to create an insert statement, if uuid value already exist update row with new values.
 		SQL.insertNoDuplicates("inventory", columns, values, columns[0]);
@@ -49,6 +50,7 @@ public class PlayerConnectionHandler implements ServerPlayConnectionEvents.Init,
 
 		// Set default value for player with no entries in database:
 		inv.clear(); 					// Empty inventory
+		player.getInventory().selectedSlot = 0;
 		player.setHealth(20f); 			// Full health
 		hunger.setExhaustion(0f); 		// No exhaustion
 		hunger.setSaturationLevel(20f); // full saturation
@@ -65,6 +67,7 @@ public class PlayerConnectionHandler implements ServerPlayConnectionEvents.Init,
 					for (int i = 0; i < inventory.size(); i++) {
 						inv.insertStack(i, inventory.get(i));
 					}
+					player.getInventory().selectedSlot = (int) result.getObject("player_selected_slot");
 
 					// Get player data and set it to the joining player
 					player.setHealth((float) result.getObject("player_health"));

@@ -28,9 +28,6 @@
       "io.github.drhampust.mysql_sync.MainServer"
     ]
   },
-  "mixins": [
-    "mysql_sync.mixins.json"
-  ],
 
   "depends": {
     "fabricloader": ">=0.14.8",
