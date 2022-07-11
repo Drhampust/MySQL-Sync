@@ -22,6 +22,7 @@ public class Main implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
+		LOGGER.info("[MySQL Sync] Plugin is now loaded!");
 		CONFIG.readConfigFromFile();
 		CONFIG.saveConfigToFile();
 		ServerLifecycleEvents.SERVER_STOPPED.register(instance -> CONFIG.saveConfigToFile());

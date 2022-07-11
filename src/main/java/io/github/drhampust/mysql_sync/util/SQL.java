@@ -41,12 +41,10 @@ public class SQL {
         if (args.equals(""))
             sqlQuery.deleteCharAt(sqlQuery.length()-1).deleteCharAt(sqlQuery.length()-1); // remove trailing comma and blank space
         sqlQuery.append(args).append(");");
-        LOGGER.info("Create table args:\n{}", args);
 
 
         // initialize statement outside of try scope
         Statement statement = null;
-        LOGGER.info("Create table using:\n{}", sqlQuery);
         connectSQL();
         // Try to perform statement
         try {
@@ -165,8 +163,6 @@ public class SQL {
             sqlQuery.deleteCharAt(sqlQuery.length()-1).deleteCharAt(sqlQuery.length()-1);
         }
         sqlQuery.append(" FROM `").append(database).append("`.`").append(db_table).append("` WHERE `").append(keyColumn).append("`=?;");
-
-        LOGGER.info("SQL Query:{}", sqlQuery);
 
         // create statement outside of try scope, so we can close it after
         PreparedStatement preparedStatement = null;

@@ -38,6 +38,7 @@ public class MainServer implements DedicatedServerModInitializer {
 		List<SQLColumn> columns = new ArrayList<>();
 		columns.add(new SQLColumn("uuid", sqlDataType.VARCHAR, 72, false));
 		columns.add(new SQLColumn("player_inventory", sqlDataType.MEDIUMTEXT, false));
+		columns.add(new SQLColumn("player_selected_slot", sqlDataType.INT, false));
 		columns.add(new SQLColumn("player_health", sqlDataType.FLOAT, false));
 		columns.add(new SQLColumn("player_hunger_exhaustion", sqlDataType.FLOAT, false));
 		columns.add(new SQLColumn("player_hunger_saturation", sqlDataType.FLOAT, false));
