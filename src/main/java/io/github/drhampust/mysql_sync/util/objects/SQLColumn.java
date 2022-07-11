@@ -1,6 +1,5 @@
 package io.github.drhampust.mysql_sync.util.objects;
 
-import io.github.drhampust.mysql_sync.Main;
 import io.github.drhampust.mysql_sync.util.sqlDataType;
 
 public class SQLColumn {

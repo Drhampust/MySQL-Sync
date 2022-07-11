@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.drhampust.mysql_sync.Main.LOGGER;
+import static io.github.drhampust.mysql_sync.Main.LOGGER_PREFIX;
 
 public class MainServer implements DedicatedServerModInitializer {
 
@@ -19,10 +20,10 @@ public class MainServer implements DedicatedServerModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		LOGGER.info("Trying to verify SQL credentials");
+		LOGGER.info("{} Trying to verify SQL credentials", LOGGER_PREFIX);
 		if (!SQL.connectSQL()) System.exit(0);
 		else SQL.disconnectSQL();
-		LOGGER.info("Credentials are valid!");
+		LOGGER.info("{} Credentials are valid!", LOGGER_PREFIX);
 
 		List<SQLColumn> columns = new ArrayList<>();
 		columns.add(new SQLColumn("uuid", sqlDataType.VARCHAR, 72, false));

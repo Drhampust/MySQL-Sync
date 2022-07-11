@@ -50,6 +50,9 @@ dependencies {
 	// By using modImplementation we can make mod depend on another jar/mod
 	// By using include we add the jar into mod jar nesting so users don't need to download it them self.
 
+	// log4j Logger
+	implementation 'org.apache.logging.log4j:log4j-api:2.18.0'
+	implementation 'org.apache.logging.log4j:log4j-core:2.18.0'
 
 	// SQL Java drivers (Needed to connect to a SQL server)
 	// https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client

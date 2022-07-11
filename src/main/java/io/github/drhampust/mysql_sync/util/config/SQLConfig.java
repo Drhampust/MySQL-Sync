@@ -4,8 +4,6 @@ import me.lortseam.completeconfig.api.ConfigEntry;
 import me.lortseam.completeconfig.data.Config;
 import me.lortseam.completeconfig.data.ConfigOptions;
 
-import static org.spongepowered.include.com.google.common.collect.ImmutableList.of;
-
 public class SQLConfig extends Config {
 
     @ConfigEntry(requiresRestart = true, comment = "\nSpecifies what host to try and connect to (Default: 127.0.0.1 which is the same as using localhost)")

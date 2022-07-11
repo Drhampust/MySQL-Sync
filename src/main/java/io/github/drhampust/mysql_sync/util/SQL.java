@@ -9,8 +9,7 @@ import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.github.drhampust.mysql_sync.Main.LOGGER;
-import static io.github.drhampust.mysql_sync.Main.SQL_CONFIG;
+import static io.github.drhampust.mysql_sync.Main.*;
 
 public class SQL {
     private static final String host;
@@ -49,7 +48,7 @@ public class SQL {
             statement.executeUpdate(sqlQuery.toString());
         } catch (SQLException e) { // Statement failed
             e.printStackTrace();
-            LOGGER.error("Creation of table on SQL Failed!");
+            LOGGER.error("{} Creation of table on SQL Failed!", LOGGER_PREFIX);
         } finally { // Statement succeeded and we need to clean up connections
             try {
                 // Close connection
@@ -58,7 +57,7 @@ public class SQL {
                 }
                 disconnectSQL();
             } catch (Exception e) {
-                LOGGER.error("Clean up of connections Failed!");
+                LOGGER.error("{} Clean up of connections Failed!", LOGGER_PREFIX);
                 e.printStackTrace();
             }
         }
@@ -138,7 +137,7 @@ public class SQL {
                 // disconnect from SQL
                 disconnectSQL();
             } catch (Exception e) {
-                LOGGER.error("Clean up of connections Failed!");
+                LOGGER.error("{} Clean up of connections Failed!", LOGGER_PREFIX);
                 e.printStackTrace();
             }
         }
@@ -189,7 +188,7 @@ public class SQL {
                 // disconnect from SQL
                 disconnectSQL();
             } catch (Exception e) {
-                LOGGER.error("Clean up of connections Failed!");
+                LOGGER.error("{} Clean up of connections Failed!", LOGGER_PREFIX);
                 e.printStackTrace();
             }
         }
@@ -211,9 +210,9 @@ public class SQL {
             try {
                 connection = DriverManager.getConnection("jdbc:mariadb://" + host + ":" + port + "/" + database + "?user=" + username  + "&password=" +  password);
             } catch (SQLException e) {
-                LOGGER.error("Invalid SQL given in configuration! Mod can not continue to run until correct information is given in config");
-                LOGGER.error("Error Message: {}", e.getMessage());
-                LOGGER.trace("Stack Trace: {}", (Object) e.getStackTrace()); //TODO: Find a way to make config toggle this
+                LOGGER.error("{} Invalid SQL given in configuration! Mod can not continue to run until correct information is given in config", LOGGER_PREFIX);
+                LOGGER.error("{} Error Message: {}", LOGGER_PREFIX, e.getMessage());
+                LOGGER.trace("{} Stack Trace: {}", LOGGER_PREFIX, e.getStackTrace()); //TODO: Find a way to make config toggle this
                 e.printStackTrace();
                 return false;
             }
@@ -227,7 +226,7 @@ public class SQL {
                 connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-                LOGGER.error("Failed to disconnect from SQL!");
+                LOGGER.error("{} Failed to disconnect from SQL!", LOGGER_PREFIX);
             }
         }
     }

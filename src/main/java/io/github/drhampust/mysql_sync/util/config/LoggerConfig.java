@@ -4,10 +4,6 @@ import me.lortseam.completeconfig.api.ConfigEntry;
 import me.lortseam.completeconfig.data.Config;
 import me.lortseam.completeconfig.data.ConfigOptions;
 
-import java.util.List;
-
-import static org.spongepowered.include.com.google.common.collect.ImmutableList.of;
-
 public class LoggerConfig extends Config {
 
     @ConfigEntry(requiresRestart = true, comment = "\nEnables (true)/Disables (false) warning messages in console (Default: true)")
