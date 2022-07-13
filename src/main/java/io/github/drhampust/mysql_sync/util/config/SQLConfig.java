@@ -21,8 +21,26 @@ public class SQLConfig extends Config {
     @ConfigEntry(requiresRestart = true, comment = "\nEnter password required to login with given username")
     public String password = "";
 
-    @ConfigEntry(requiresRestart = true, comment = "\nEnter what database you are using\n Available options:\nMySQL\nPostgreSQL\nMicrosoft SQL Server\nMariaDB (Default)")
-    public String sqlType = "MariaDB";
+    @ConfigEntry.Dropdown
+    @ConfigEntry(requiresRestart = true, comment = "\nEnter what database you are using\n Available options:\nMySQL\nPostgreSQL\nMicrosoftSQL\nMariaDB (Default)")
+    public SQLType sqlType = SQLType.MariaDB;
+
+
+    public enum SQLType {
+        MySQL("mysql"),
+        PostgreSQL("postgresql"),
+        MicrosoftSQL("sqlserver"),
+        MariaDB("mariadb");
+
+        private final String subProtocol;
+        SQLType(String subProtocol) {
+            this.subProtocol = subProtocol;
+        }
+        public String getSubProtocol() {
+            return subProtocol;
+        }
+    }
+
 
     public SQLConfig() {
         super(ConfigOptions.mod("mysql_sync").branch(new String[]{"", "SQL"}).fileHeader("Main Configuration file for SQL Options"));

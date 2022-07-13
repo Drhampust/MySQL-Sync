@@ -1,9 +1,9 @@
 package io.github.drhampust.mysql_sync;
 
 import io.github.drhampust.mysql_sync.events.PlayerConnectionHandler;
-import io.github.drhampust.mysql_sync.util.SQL;
+import io.github.drhampust.mysql_sync.util.sql.SQLHelper;
 import io.github.drhampust.mysql_sync.util.objects.SQLColumn;
-import io.github.drhampust.mysql_sync.util.sqlDataType;
+import io.github.drhampust.mysql_sync.util.SQLDataType;
 import net.fabricmc.api.DedicatedServerModInitializer;
 
 import java.util.ArrayList;
@@ -21,22 +21,22 @@ public class MainServer implements DedicatedServerModInitializer {
 		// Proceed with mild caution.
 
 		LOGGER.info("{} Trying to verify SQL credentials", LOGGER_PREFIX);
-		if (!SQL.connectSQL()) System.exit(0);
-		else SQL.disconnectSQL();
+		if (!SQLHelper.connectSQL()) System.exit(0);
+		else SQLHelper.disconnectSQL();
 		LOGGER.info("{} Credentials are valid!", LOGGER_PREFIX);
 
 		List<SQLColumn> columns = new ArrayList<>();
-		columns.add(new SQLColumn("uuid", sqlDataType.VARCHAR, 72, false));
-		columns.add(new SQLColumn("player_inventory", sqlDataType.MEDIUMTEXT, false));
-		columns.add(new SQLColumn("player_selected_slot", sqlDataType.INT, false));
-		columns.add(new SQLColumn("player_health", sqlDataType.FLOAT, false));
-		columns.add(new SQLColumn("player_hunger_exhaustion", sqlDataType.FLOAT, false));
-		columns.add(new SQLColumn("player_hunger_saturation", sqlDataType.FLOAT, false));
-		columns.add(new SQLColumn("player_hunger_level", sqlDataType.INT, false));
-		columns.add(new SQLColumn("player_level", sqlDataType.INT, false));
-		columns.add(new SQLColumn("player_experience", sqlDataType.INT, false));
+		columns.add(new SQLColumn("uuid", SQLDataType.VARCHAR, 72, false));
+		columns.add(new SQLColumn("player_inventory", SQLDataType.MEDIUMTEXT, false));
+		columns.add(new SQLColumn("player_selected_slot", SQLDataType.INT, false));
+		columns.add(new SQLColumn("player_health", SQLDataType.FLOAT, false));
+		columns.add(new SQLColumn("player_hunger_exhaustion", SQLDataType.FLOAT, false));
+		columns.add(new SQLColumn("player_hunger_saturation", SQLDataType.FLOAT, false));
+		columns.add(new SQLColumn("player_hunger_level", SQLDataType.INT, false));
+		columns.add(new SQLColumn("player_level", SQLDataType.INT, false));
+		columns.add(new SQLColumn("player_experience", SQLDataType.INT, false));
 
-		SQL.createTable("inventory", columns, "CONSTRAINT `uuid` PRIMARY KEY (`uuid`)");
+		SQLHelper.createTable("inventory", columns, "CONSTRAINT `uuid` PRIMARY KEY (`uuid`)");
 
 		PlayerConnectionHandler playerConnectionHandler = new PlayerConnectionHandler();
 		playerConnectionHandler.register();

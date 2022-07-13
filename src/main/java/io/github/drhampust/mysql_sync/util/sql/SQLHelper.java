@@ -1,7 +1,6 @@
-package io.github.drhampust.mysql_sync.util;
+package io.github.drhampust.mysql_sync.util.sql;
 
-
-import io.github.drhampust.mysql_sync.Main;
+import io.github.drhampust.mysql_sync.util.config.SQLConfig;
 import io.github.drhampust.mysql_sync.util.objects.SQLColumn;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,12 +10,13 @@ import java.util.List;
 
 import static io.github.drhampust.mysql_sync.Main.*;
 
-public class SQL {
+public class SQLHelper {
     private static final String host;
     private static final String port;
     private static final String database;
     private static final String username;
     private static final String password;
+    private static final SQLConfig.SQLType sqlType;
     private static Connection connection;
 
     static {
@@ -25,6 +25,41 @@ public class SQL {
         database = SQL_CONFIG.database;
         username = SQL_CONFIG.username;
         password = SQL_CONFIG.password;
+        sqlType = SQL_CONFIG.sqlType;
+    }
+
+    public static boolean connectSQL() {
+        if (!isConnected()) {
+            try {
+                connection = DriverManager.getConnection("jdbc:" + sqlType.getSubProtocol() + "://" + host + ":" + port + "/" + database + "?user=" + username  + "&password=" +  password);
+            } catch (SQLException e) {
+                LOGGER.error("{} Invalid SQL given in configuration! Mod can not continue to run until correct information is given in config", LOGGER_PREFIX);
+                LOGGER.error("{} Error Message: {}", LOGGER_PREFIX, e.getMessage());
+                LOGGER.trace("{} Stack Trace: {}", LOGGER_PREFIX, e.getStackTrace()); //TODO: Find a way to make config toggle this
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
+    }
+    public static void disconnectSQL() {
+        if (isConnected()) { // Only disconnect if we are connected
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                LOGGER.error("{} Failed to disconnect from SQL!", LOGGER_PREFIX);
+            }
+        }
+    }
+    public static boolean isConnected() {
+        if(connection != null) try {
+            return connection.isClosed();
+        } catch (SQLException ignored) {}
+        return false;
+    }
+    public static Connection getConnection() {
+        return connection;
     }
 
     public static void createTable(String tableName, @NotNull List<SQLColumn> columns, String args) {
@@ -195,40 +230,5 @@ public class SQL {
         return result;
     }
 
-    public static Connection getConnection() {
-        return connection;
-    }
-    public static boolean isConnected() {
-        if(connection != null) try {
-            return connection.isClosed();
-        } catch (SQLException ignored) {}
-        return false;
-    }
-
-    public static boolean connectSQL() {
-        if (!isConnected()) {
-            try {
-                connection = DriverManager.getConnection("jdbc:mariadb://" + host + ":" + port + "/" + database + "?user=" + username  + "&password=" +  password);
-            } catch (SQLException e) {
-                LOGGER.error("{} Invalid SQL given in configuration! Mod can not continue to run until correct information is given in config", LOGGER_PREFIX);
-                LOGGER.error("{} Error Message: {}", LOGGER_PREFIX, e.getMessage());
-                LOGGER.trace("{} Stack Trace: {}", LOGGER_PREFIX, e.getStackTrace()); //TODO: Find a way to make config toggle this
-                e.printStackTrace();
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static void disconnectSQL() {
-        if (isConnected()) { // Only disconnect if we are connected
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-                LOGGER.error("{} Failed to disconnect from SQL!", LOGGER_PREFIX);
-            }
-        }
-    }
 
 }

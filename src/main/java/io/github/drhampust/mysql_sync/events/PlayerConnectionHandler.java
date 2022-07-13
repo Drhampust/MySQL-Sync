@@ -1,6 +1,6 @@
 package io.github.drhampust.mysql_sync.events;
 
-import io.github.drhampust.mysql_sync.util.SQL;
+import io.github.drhampust.mysql_sync.util.sql.SQLHelper;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerInventory;
@@ -16,8 +16,8 @@ import java.util.List;
 
 import static io.github.drhampust.mysql_sync.Main.LOGGER;
 import static io.github.drhampust.mysql_sync.Main.LOGGER_PREFIX;
-import static io.github.drhampust.mysql_sync.util.SQL.*;
-import static io.github.drhampust.mysql_sync.util.base64Util.*;
+import static io.github.drhampust.mysql_sync.util.sql.SQLHelper.*;
+import static io.github.drhampust.mysql_sync.util.Base64Util.*;
 
 public class PlayerConnectionHandler implements ServerPlayConnectionEvents.Init, ServerPlayConnectionEvents.Disconnect {
 	public void register() {
@@ -38,7 +38,7 @@ public class PlayerConnectionHandler implements ServerPlayConnectionEvents.Init,
 		Object[] values = {player.getUuidAsString(), invToBase64(player), player.getInventory().selectedSlot, player.getHealth(), player.getHungerManager().getExhaustion(), player.getHungerManager().getSaturationLevel(), player.getHungerManager().getFoodLevel(), player.experienceLevel, (int) (player.experienceProgress * player.getNextLevelExperience())};
 
 		// Call function to create an insert statement, if uuid value already exist update row with new values.
-		SQL.insertNoDuplicates("inventory", columns, values, columns[0]);
+		SQLHelper.insertNoDuplicates("inventory", columns, values, columns[0]);
 	}
 
 	@Override

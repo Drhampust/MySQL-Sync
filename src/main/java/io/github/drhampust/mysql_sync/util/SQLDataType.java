@@ -1,6 +1,6 @@
 package io.github.drhampust.mysql_sync.util;
 
-public enum sqlDataType {
+public enum SQLDataType {
     // Text based below
     CHAR(false, true),
     VARCHAR(false, true),
@@ -32,11 +32,11 @@ public enum sqlDataType {
     private final boolean sizeable;
     private final boolean numerical;
 
-    private sqlDataType(boolean numerical) {
+    private SQLDataType(boolean numerical) {
         this.numerical = numerical;
         this.sizeable = false;
     }
-    private sqlDataType(boolean numerical, boolean sizeable) {
+    private SQLDataType(boolean numerical, boolean sizeable) {
         this.numerical = numerical;
         this.sizeable = sizeable;
     }

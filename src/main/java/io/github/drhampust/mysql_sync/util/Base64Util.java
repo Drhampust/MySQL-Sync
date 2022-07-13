@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-public class base64Util {
+public class Base64Util {
     /**
      * A method to encode a ByteArrayOutputStream to base64 encoded String
      * @param data to encode

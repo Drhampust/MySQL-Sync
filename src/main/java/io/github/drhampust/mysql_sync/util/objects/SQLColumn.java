@@ -1,17 +1,17 @@
 package io.github.drhampust.mysql_sync.util.objects;
 
-import io.github.drhampust.mysql_sync.util.sqlDataType;
+import io.github.drhampust.mysql_sync.util.SQLDataType;
 
 public class SQLColumn {
     private final String columnName;
-    private final sqlDataType type;
+    private final SQLDataType type;
     private final String typeSize;
     private final String[] flags;
 
-    public SQLColumn(String columnName, sqlDataType type){
+    public SQLColumn(String columnName, SQLDataType type){
         this(columnName, type, 0);
     }
-    public SQLColumn(String columnName, sqlDataType type, int typeSize){
+    public SQLColumn(String columnName, SQLDataType type, int typeSize){
         this.columnName = columnName;
         this.type = type;
         flags = new String[]{"", "", "", ""};
@@ -23,15 +23,15 @@ public class SQLColumn {
             this.typeSize = "(" + typeSize + ")";
         else this.typeSize = "";
     }
-    public SQLColumn(String columnName, sqlDataType type, boolean nullable){
+    public SQLColumn(String columnName, SQLDataType type, boolean nullable){
         this(columnName, type, 0);
         setNullable(nullable);
     }
-    public SQLColumn(String columnName, sqlDataType type, int typeSize, boolean nullable){
+    public SQLColumn(String columnName, SQLDataType type, int typeSize, boolean nullable){
         this(columnName, type, typeSize);
         setNullable(nullable);
     }
-    public SQLColumn(String columnName, sqlDataType type, int typeSize, boolean nullable, boolean zeroFill, boolean unsigned, String default_value){
+    public SQLColumn(String columnName, SQLDataType type, int typeSize, boolean nullable, boolean zeroFill, boolean unsigned, String default_value){
         this(columnName, type, typeSize, nullable);
         setZerofill(zeroFill);
         setUnsigned(unsigned);
