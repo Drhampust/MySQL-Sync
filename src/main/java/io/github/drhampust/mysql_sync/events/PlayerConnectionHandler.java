@@ -10,9 +10,9 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import static io.github.drhampust.mysql_sync.Main.LOGGER;
 import static io.github.drhampust.mysql_sync.Main.LOGGER_PREFIX;
@@ -50,39 +50,33 @@ public class PlayerConnectionHandler implements ServerPlayConnectionEvents.Init,
 		HungerManager hunger = player.getHungerManager();
 
 		// Set default value for player with no entries in database:
-		inv.clear(); 					// Empty inventory
-		player.getInventory().selectedSlot = 0;
-		player.setHealth(20f); 			// Full health
-		hunger.setExhaustion(0f); 		// No exhaustion
-		hunger.setSaturationLevel(20f); // full saturation
-		hunger.setFoodLevel(20); 		// Full food bar
-		player.setExperienceLevel(0); 	// No levels
-		player.setExperiencePoints(0); 	// No xp points
+		inv.clear(); 							// Empty inventory
+		player.getInventory().selectedSlot = 0; // 1st Slot selected
+		player.setHealth(20f); 					// Full health
+		hunger.setExhaustion(0f); 				// No exhaustion
+		hunger.setSaturationLevel(20f);			// full saturation
+		hunger.setFoodLevel(20); 				// Full food bar
+		player.setExperienceLevel(0); 			// No levels
+		player.setExperiencePoints(0); 			// No xp points
 
 		// Get data from database
-		ResultSet result = simpleSelectWhere("inventory", new String[]{},"uuid", player.getUuidAsString());
-		try {
-			if(result!=null){ // in no data was received because of invalid SQL Query skip
-				if (result.next()) { // If we received at least 1 row of information from Query (only need 1, so we skip the rest)
-					List<ItemStack> inventory = invFromBase64(result.getString("player_inventory")); // decode Inventory and replace player inventory
-					for (int i = 0; i < inventory.size(); i++) {
-						inv.insertStack(i, inventory.get(i));
-					}
-					player.getInventory().selectedSlot = (int) result.getObject("player_selected_slot");
-
-					// Get player data and set it to the joining player
-					player.setHealth((float) result.getObject("player_health"));
-
-					hunger.setExhaustion((float) result.getObject("player_hunger_exhaustion"));
-					hunger.setSaturationLevel((float) result.getObject("player_hunger_saturation"));
-					hunger.setFoodLevel((int) result.getObject("player_hunger_level"));
-
-					player.setExperienceLevel((int) result.getObject("player_level"));
-					player.setExperiencePoints((int) result.getObject("player_experience"));
-				}
+		List<Map<String, Object>> result = simpleSelectWhere("inventory", new String[]{},"uuid", player.getUuidAsString());
+		if (result.size() != 0) {// If we received at least 1 row of information from Query (only need 1, so we skip the rest)
+			List<ItemStack> inventory = invFromBase64(String.valueOf(result.get(0).get("player_inventory"))); // decode Inventory and replace player inventory
+			for (int i = 0; i < inventory.size(); i++) {
+				inv.insertStack(i, inventory.get(i));
 			}
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			player.getInventory().selectedSlot = (int) result.get(0).get("player_selected_slot");
+
+			// Get player data and set it to the joining player
+			player.setHealth((float) result.get(0).get("player_health"));
+
+			hunger.setExhaustion((float) result.get(0).get("player_hunger_exhaustion"));
+			hunger.setSaturationLevel((float) result.get(0).get("player_hunger_saturation"));
+			hunger.setFoodLevel((int) result.get(0).get("player_hunger_level"));
+
+			player.setExperienceLevel((int) result.get(0).get("player_level"));
+			player.setExperiencePoints((int) result.get(0).get("player_experience"));
 		}
 	}
 }

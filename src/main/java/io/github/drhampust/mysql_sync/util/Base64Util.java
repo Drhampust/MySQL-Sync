@@ -7,7 +7,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -71,6 +70,7 @@ public class Base64Util {
         return inventory;
     }
 
+    @SuppressWarnings("unused")
     public static String objectToBase64(Object object) throws IllegalStateException {
 
         try {
@@ -85,6 +85,7 @@ public class Base64Util {
             throw new RuntimeException(e);
         }
     }
+    @SuppressWarnings("unused")
     public static Object objectFromBase64(String data){
         Object output;
         try {
@@ -97,25 +98,6 @@ public class Base64Util {
             throw new RuntimeException(e);
         }
         return output;
-    }
-
-
-    /**
-     * Works as intended converts a String in to a base64 encoded string
-     * @param UUID Player UUID to encode using base64
-     * @return base64 encoded UUID
-     */
-    public static String uuidToBase64(String UUID) {
-        return Base64.getEncoder().encodeToString(UUID.getBytes(StandardCharsets.UTF_8));
-    }
-
-    /**
-     * Decodes a base64 encoded string
-     * @param data the encoded UUID
-     * @return decoded UUID
-     */
-    public static String uuidFromBase64(String data) {
-        return new String(Base64.getDecoder().decode(data));
     }
 }
 

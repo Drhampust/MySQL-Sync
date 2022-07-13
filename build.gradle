@@ -55,6 +55,10 @@ dependencies {
 	implementation 'org.apache.logging.log4j:log4j-core:2.18.0'
 
 	// SQL Java drivers (Needed to connect to a SQL server)
+	// https://mvnrepository.com/artifact/com.zaxxer/HikariCP (Connection pooling)
+	implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.1'
+
+
 	// https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
 	modImplementation "org.mariadb.jdbc:mariadb-java-client:${project.mariadb_version}"
 	include "org.mariadb.jdbc:mariadb-java-client:${project.mariadb_version}"

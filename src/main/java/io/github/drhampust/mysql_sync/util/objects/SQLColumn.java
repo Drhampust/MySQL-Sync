@@ -1,6 +1,7 @@
 package io.github.drhampust.mysql_sync.util.objects;
 
 import io.github.drhampust.mysql_sync.util.SQLDataType;
+import org.jetbrains.annotations.NotNull;
 
 public class SQLColumn {
     private final String columnName;
@@ -8,10 +9,11 @@ public class SQLColumn {
     private final String typeSize;
     private final String[] flags;
 
+    @SuppressWarnings("unused")
     public SQLColumn(String columnName, SQLDataType type){
         this(columnName, type, 0);
     }
-    public SQLColumn(String columnName, SQLDataType type, int typeSize){
+    public SQLColumn(String columnName, @NotNull SQLDataType type, int typeSize){
         this.columnName = columnName;
         this.type = type;
         flags = new String[]{"", "", "", ""};
@@ -31,6 +33,7 @@ public class SQLColumn {
         this(columnName, type, typeSize);
         setNullable(nullable);
     }
+    @SuppressWarnings("unused")
     public SQLColumn(String columnName, SQLDataType type, int typeSize, boolean nullable, boolean zeroFill, boolean unsigned, String default_value){
         this(columnName, type, typeSize, nullable);
         setZerofill(zeroFill);
