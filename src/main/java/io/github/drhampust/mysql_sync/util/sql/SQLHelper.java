@@ -49,7 +49,7 @@ public class SQLHelper {
             statement.executeUpdate(sqlQuery.toString());
         } catch (SQLException e) { // Statement failed
             e.printStackTrace();
-            LOGGER.error("{} Creation of table on SQL Failed!", LOGGER_PREFIX);
+            LOGGER.error("Creation of table on SQL Failed!");
         }
     }
 
@@ -108,7 +108,7 @@ public class SQLHelper {
             preparedStatement.executeUpdate();
         } catch (SQLException e) { // Statement failed
             e.printStackTrace();
-            LOGGER.error("{} Creation of table on SQL Failed!", LOGGER_PREFIX);
+            LOGGER.error("Creation of table on SQL Failed!");
         }
     }
 
@@ -152,7 +152,7 @@ public class SQLHelper {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("{} Creation of table on SQL Failed!", LOGGER_PREFIX);
+            LOGGER.error("Creation of table on SQL Failed!");
             throw new RuntimeException(e);
         }
         return resultList;

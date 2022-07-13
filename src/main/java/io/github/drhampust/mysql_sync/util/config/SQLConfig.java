@@ -6,25 +6,31 @@ import me.lortseam.completeconfig.data.ConfigOptions;
 
 public class SQLConfig extends Config {
 
+    @SuppressWarnings("FieldMayBeFinal")
     @ConfigEntry(requiresRestart = true, comment = "\nSpecifies what host to try and connect to (Default: 127.0.0.1 which is the same as using localhost)")
-    private final String host = "127.0.0.1";
+    private String host = "127.0.0.1";
 
+    @SuppressWarnings("FieldMayBeFinal")
     @ConfigEntry(requiresRestart = true, comment = "\nSpecifies what port the SQL database is running on (Default: 3306)")
-    private final int port = 3306;
+    private int port = 3306;
 
+    @SuppressWarnings("FieldMayBeFinal")
     @ConfigEntry(requiresRestart = true, comment = "\nEnter the name of the database on the SQL server")
-    private final String database = "";
+    private String database = "";
 
+    @SuppressWarnings("FieldMayBeFinal")
     @ConfigEntry(requiresRestart = true, comment = "\nEnter username used to login to SQL with access to given database")
-    private final String username = "";
+    private String username = "";
 
+    @SuppressWarnings("FieldMayBeFinal")
     @ConfigEntry(requiresRestart = true, comment = "\nEnter password required to login with given username")
-    private final String password = "";
+    private String password = "";
 
 
+    @SuppressWarnings("FieldMayBeFinal")
     @ConfigEntry.Dropdown
     @ConfigEntry(requiresRestart = true, comment = "\nEnter what database you are using\n Available options:\nMySQL\nPostgreSQL\nMicrosoftSQL\nMariaDB (Default)")
-    private final SQLType sqlType = SQLType.MariaDB;
+    private SQLType sqlType = SQLType.MariaDB;
 
 
     @SuppressWarnings("unused")

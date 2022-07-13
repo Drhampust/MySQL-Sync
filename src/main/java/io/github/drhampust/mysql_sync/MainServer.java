@@ -21,17 +21,17 @@ public class MainServer implements DedicatedServerModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		LOGGER.info("{} Trying to verify SQL credentials", LOGGER_PREFIX);
+		LOGGER.info("Trying to verify SQL credentials");
 		try (
 			Connection con = SQLHelper.getConnection();){
 			if (!con.isValid(0)) {
 				System.exit(0);
 			}
 		} catch (SQLException e) {
-			LOGGER.warn("{} SQL Connection is not valid! Please check that your configuration is correct!", LOGGER_PREFIX);
+			LOGGER.warn("SQL Connection is not valid! Please check that your configuration is correct!");
 			throw new RuntimeException(e);
 		}
-		LOGGER.info("{} Credentials are valid!", LOGGER_PREFIX);
+		LOGGER.info("Credentials are valid!");
 
 		List<SQLColumn> columns = new ArrayList<>();
 		columns.add(new SQLColumn("uuid", SQLDataType.VARCHAR, 72, false));

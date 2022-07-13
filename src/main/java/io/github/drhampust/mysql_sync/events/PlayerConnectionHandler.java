@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import static io.github.drhampust.mysql_sync.Main.LOGGER;
-import static io.github.drhampust.mysql_sync.Main.LOGGER_PREFIX;
 import static io.github.drhampust.mysql_sync.util.sql.SQLHelper.*;
 import static io.github.drhampust.mysql_sync.util.Base64Util.*;
 
@@ -28,7 +27,7 @@ public class PlayerConnectionHandler implements ServerPlayConnectionEvents.Init,
 
 	@Override
 	public void onPlayDisconnect(@NotNull ServerPlayNetworkHandler handler, MinecraftServer server) {
-		LOGGER.info("{} Player disconnected saving inventory to db...", LOGGER_PREFIX);
+		LOGGER.info("Player disconnected saving inventory to db...");
 		ServerPlayerEntity player = handler.getPlayer();
 
 		// Create an Array of columns to save
@@ -43,7 +42,7 @@ public class PlayerConnectionHandler implements ServerPlayConnectionEvents.Init,
 
 	@Override
 	public void onPlayInit(@NotNull ServerPlayNetworkHandler handler, MinecraftServer server) {
-		LOGGER.info("{} Player Joined loading information from db...", LOGGER_PREFIX);
+		LOGGER.info("Player Joined loading information from db...");
 		// Initialize variables in method scope, so they can be used within method.
 		ServerPlayerEntity player = handler.getPlayer();
 		PlayerInventory inv = player.getInventory();
