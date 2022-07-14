@@ -16,15 +16,15 @@ public class SQLConfig extends Config {
 
     @SuppressWarnings("FieldMayBeFinal")
     @ConfigEntry(requiresRestart = true, comment = "\nEnter the name of the database on the SQL server")
-    private String database = "";
+    private String database = "test";
 
     @SuppressWarnings("FieldMayBeFinal")
     @ConfigEntry(requiresRestart = true, comment = "\nEnter username used to login to SQL with access to given database")
-    private String username = "";
+    private String username = "root";
 
     @SuppressWarnings("FieldMayBeFinal")
     @ConfigEntry(requiresRestart = true, comment = "\nEnter password required to login with given username")
-    private String password = "";
+    private String password = "root";
 
 
     @SuppressWarnings("FieldMayBeFinal")

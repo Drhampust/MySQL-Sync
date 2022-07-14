@@ -1,32 +1,72 @@
-name: Fabric CI
+name: Fabric Server Full Test
 on: [pull_request, push]
 
 jobs:
-  runTests:
-    runs-on: ubuntu-latest
-
+  build:
     strategy:
       matrix:
-        java: [ 17 ] # Build on Java 17
+        # Current Java LTS & minimum supported by Minecraft
+        java: [17]
+        # and run on Linux
+        os: [ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+      - name: validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: setup jdk ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: make gradle wrapper executable
+        if: ${{ runner.os != 'Windows' }}
+        run: chmod +x ./gradlew
+      - name: build
+        run: ./gradlew build
+      - name: capture build artifacts
+        if: ${{ runner.os == 'Linux' && matrix.java == '17' }} # Only upload artifacts built from latest java on one OS
+        uses: actions/upload-artifact@v2
+        with:
+          name: Artifacts
+          path: build/libs/
+  runServer:
+    strategy:
+      matrix:
+        # Current Java LTS & minimum supported by Minecraft
+        java: [17]
+        # and run on Linux
+        os: [ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
 
     timeout-minutes: 20 # Fail after 20 minutes
 
     steps:
-      - name: "Checkout Project"
+      - name: checkout repository
         uses: actions/checkout@v2
-        with:
-          lfs: true
 
-      - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v2
+      - name: validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: setup jdk ${{ matrix.java }}
+        uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-          distribution: 'adopt'
 
-      - name: "Run Fabric Tests"
-        uses: Drhampust/Minecraft-Architectury-Testing@main
+        # Removes the default MySQL server
+      - name: Shutdown Ubuntu MySQL (SUDO)
+        run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please do not remove it
+
+        # Runs a MariaDB SQL server that plugin can interact with
+      - name: Set up MariaDB
+        uses: getong/mariadb-action@v1.1
         with:
-          serverType: "fabric"
+          # Required if "mysql user" is empty, default is empty. The root superuser password
+          mysql root password: ${{ secrets.ROOT_PASSWORD }}
+
+      # Downloads all needed files and runs a fabric server whit plugin
+      - name: "Run Fabric Tests"
+        uses: Drhampust/Fabric-Minecraft-SQL-Testing@main
 
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1
