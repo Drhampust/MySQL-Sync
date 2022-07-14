@@ -28,7 +28,7 @@ jobs:
         if: ${{ runner.os == 'Linux' && matrix.java == '17' }} # Only upload artifacts built from latest java on one OS
         uses: actions/upload-artifact@v2
         with:
-          name: Artifacts
+          name: Artifact
           path: build/libs/
   runServer:
     strategy:
@@ -74,9 +74,3 @@ jobs:
       # Downloads all needed files and runs a fabric server whit plugin
       - name: "Run Fabric Tests"
         uses: Drhampust/Fabric-Minecraft-SQL-Testing@main
-
-      - name: "Upload Artifact"
-        uses: actions/upload-artifact@v1
-        with:
-          name: Builds
-          path: build/libs
