@@ -24,7 +24,7 @@ jobs:
           distribution: 'adopt'
 
       - name: "Run Fabric Tests"
-        uses: ValkyrienSkies/Minecraft-Architectury-Testing@master
+        uses: Drhampust/Minecraft-Architectury-Testing@main
         with:
           serverType: "fabric"
 
