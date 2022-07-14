@@ -24,7 +24,7 @@ jobs:
           distribution: 'adopt'
 
       - name: "Run Fabric Tests"
-        uses: Geometrically/fabric-test-runner@v1
+        uses: Drhampust/fabric-test-runner@v1
         with:
           minecraftVersion: 1.19
 
