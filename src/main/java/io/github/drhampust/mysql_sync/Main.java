@@ -4,6 +4,7 @@ import io.github.drhampust.mysql_sync.util.Logger;
 import io.github.drhampust.mysql_sync.util.config.LoggerConfig;
 import io.github.drhampust.mysql_sync.util.config.SQLConfig;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 
 public class Main implements ModInitializer {
 
@@ -27,5 +28,7 @@ public class Main implements ModInitializer {
 		SQL_CONFIG.save();
 		LOGGER_CONFIG.load();
 		LOGGER_CONFIG.save();
+
+//		ServerLifecycleEvents.SERVER_STARTED.register(instance -> SQL_CONFIG.save()); // run test here
 	}
 }
