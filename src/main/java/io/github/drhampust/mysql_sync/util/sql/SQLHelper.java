@@ -23,7 +23,6 @@ public class SQLHelper {
         config.setJdbcUrl(sqlURL);
         config.setUsername(SQL_CONFIG.getUsername());
         config.setPassword(SQL_CONFIG.getPassword());
-
         ds = new HikariDataSource(config);
     }
 

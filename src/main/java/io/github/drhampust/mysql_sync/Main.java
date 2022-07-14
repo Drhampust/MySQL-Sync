@@ -15,6 +15,7 @@ public class Main implements ModInitializer {
 	public static final Logger LOGGER = new Logger(MOD_ID, "[" + MOD_ID + "] ");
 	public static final SQLConfig SQL_CONFIG = new SQLConfig();
 	public static final LoggerConfig LOGGER_CONFIG = new LoggerConfig();
+	public static boolean validSQL = true;
 
 
 	@Override
@@ -28,6 +29,14 @@ public class Main implements ModInitializer {
 		SQL_CONFIG.save();
 		LOGGER_CONFIG.load();
 		LOGGER_CONFIG.save();
+
+		LOGGER.info("Trying to verify SQL credentials");
+		try {
+			Class<?> c = Class.forName("io.github.drhampust.mysql_sync.util.sql.SQLHelper");
+		} catch (ExceptionInInitializerError | ClassNotFoundException e) {
+			validSQL = false;
+			LOGGER.error("SQL credentials are NOT Valid, Disabling plugin...");
+		}
 
 //		ServerLifecycleEvents.SERVER_STARTED.register(instance -> SQL_CONFIG.save()); // run test here
 	}
