@@ -24,9 +24,9 @@ jobs:
           distribution: 'adopt'
 
       - name: "Run Fabric Tests"
-        uses: Drhampust/fabric-test-runner@master
+        uses: ValkyrienSkies/Minecraft-Architectury-Testing@v1.9
         with:
-          minecraftVersion: 1.19
+          serverType: "fabric"
 
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v1
