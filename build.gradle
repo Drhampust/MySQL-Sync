@@ -34,6 +34,8 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
@@ -70,6 +72,18 @@ dependencies {
 	// Config Handler
 	modImplementation("com.gitlab.Lortseam.completeconfig:base:${project.completeconfig_version}")
 	include "com.gitlab.Lortseam.completeconfig:base:${project.completeconfig_version}"
+
+	// Unit Testing
+	testImplementation(platform('org.junit:junit-bom:5.8.2'))
+	testImplementation('org.junit.jupiter:junit-jupiter')
+	testImplementation 'org.mockito:mockito-all:1.10.19'
+
+	testImplementation "org.mockito:mockito-all:1.10.19"
+
+	testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
+	testImplementation 'org.powermock:powermock-module-junit4-rule:2.0.9'
+	testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
+	testImplementation 'org.powermock:powermock-classloading-xstream:2.0.9'
 
 }
 
@@ -113,5 +127,13 @@ publishing {
 		// Notice: This block does NOT have the same function as the block in the top level.
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
+	}
+}
+
+
+test {
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
 	}
 }
